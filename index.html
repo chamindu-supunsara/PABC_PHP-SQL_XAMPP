@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+    <title>User Role</title>
+</head>
+
+<body>
+
+    <div class="container" id="container">
+    <img src="./img/logo.png" alt="logo">
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1 id="greeting"></h1>
+                    <p>Select User Role</p>
+                    <button class="hidden" id="admin" onclick="window.location.href = 'LoginAdmin.php';">Admin</button>
+                    <button class="hidden" id="customer" onclick="window.location.href = 'LoginCustomer.php';">Customer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var date = new Date();
+        var hour = date.getHours();
+        var greeting = "";
+
+        if (hour >= 5 && hour < 12) {
+            greeting = "Hello, Good morning!";
+        } else if (hour >= 12 && hour < 15) {
+            greeting = "Hello,  Good afternoon!";
+        } else if (hour >= 15 && hour < 18) {
+            greeting = "Hello, Good evening!";
+        } else {
+            greeting = "Hello,  Good night!";
+        }
+
+        document.getElementById("greeting").innerHTML = greeting;
+    </script>
+
+</body>
+
+</html>

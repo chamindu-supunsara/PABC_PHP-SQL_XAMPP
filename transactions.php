@@ -62,165 +62,187 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
         <span>Empowering your finances, one click at a time.</span>
 
       </div>
-      <div class="history_lists">
+      <div class="history_list">
         <div class="list1">
           <div class="row">
-            <h4>History</h4>
-            <a href="#">See all</a>
+            <h4>Funds Transactions</h4>
           </div>
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Dates</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Ammount</th>
+                <th>Source Account No</th>
+                <th>Account Type</th>
+                <th>Beneficiary Account No</th>
+                <th>Beneficiary Email</th>
+                <th>Payment Type</th>
+                <th>Transfer Type</th>
+                <th>Tranfer Amount</th>
               </tr>
             </thead>
             <tbody>
+              <?php
+                include("connection.php");
+                $email = $_SESSION['loginGuard'];
+                $sql = "SELECT * FROM accounts WHERE email = '$email'";
+                $result = mysqli_query($conn, $sql);
+
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $sen_email = $_SESSION['loginGuard'];
+                        $sql = "SELECT * FROM fund_transfer WHERE sender_email = '$sen_email'";
+                        $result = mysqli_query($conn, $sql);
+
+                        if (mysqli_num_rows($result) > 0) {
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                ?>
+                                <tr>
+                                    <td><?php echo $row['source_account_number']; ?></td>
+                                    <td><?php echo $row['account_type']; ?></td>
+                                    <td><?php echo $row['beneficiary_account_no']; ?></td>
+                                    <td><?php echo $row['beneficiary_email']; ?></td>
+                                    <td><?php echo $row['payment_type']; ?></td>
+                                    <td><?php echo $row['fund_transfer_type']; ?></td>
+                                    <td>Rs <?php echo number_format($row['transfer_amount']); ?></td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            echo "No transactions found";
+                        }
+                    }
+                } else {
+                    echo "No accounts found";
+                }
+              ?>
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+        <div class="list2">
+          <div class="row">
+            <h4>Mobile Bills Transactions</h4>
+          </div>
+          <table>
+            <thead>
               <tr>
-                <td>1</td>
-                <td>2, Aug, 2022</td>
-                <td>Sam Tonny</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
+                <th>Provider</th>
+                <th>Acc No</th>
+                <th>Mobile No</th>
+                <th>Amount</th>
               </tr>
-              <tr>
-                <td>2</td>
-                <td>29, July, 2022</td>
-                
-                <td>Code Info</td>
-                <td>Silver</td>
-                <td>$5,000.00</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>15, July, 2022</td>
-              
-                <td>Jhon David</td>
-                <td>Startup</td>
-                <td>$3000.00</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>5, July, 2022</td>
-                <td>Salina Gomiz</td>
-                <td>Premimum</td>
-                <td>$7000.00</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>29, June, 2022</td>
-                <td>Gomiz</td>
-                <td>Gold</td>
-                <td>$4000.00</td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>28, June, 2022</td>
-                <td>Elyana Jhon</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
+            </thead>
+            <tbody>
+            <?php
+                include("connection.php");
+                $email = $_SESSION['loginGuard'];
+                $sql = "SELECT * FROM accounts WHERE email = '$email'";
+                $result = mysqli_query($conn, $sql);
+
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $sen_email = $_SESSION['loginGuard'];
+                        $sql = "SELECT * FROM bills WHERE email = '$sen_email'";
+                        $result = mysqli_query($conn, $sql);
+
+                        if (mysqli_num_rows($result) > 0) {
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                ?>
+                                <tr>
+                                    <td><?php echo $row['type']; ?></td>
+                                    <td><?php echo $row['accountno']; ?></td>
+                                    <td><?php echo $row['mobileno']; ?></td>
+                                    <td>Rs <?php echo number_format($row['amount']); ?></td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            echo "No transactions found";
+                        }
+                    }
+                } else {
+                    echo "No accounts found";
+                }
+              ?>
             </tbody>
           </table>
         </div>
         <div class="list2">
           <div class="row">
-            <h4>Documnets</h4>
-            <a href="#">Upload</a>
+            <h4>Utility Bills Transactions</h4>
           </div>
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Title</th>
                 <th>Type</th>
-                <th>Uplaoded</th>
+                <th>Acc No</th>
+                <th>Email</th>
+                <th>Amount</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td>CNIC</td>
-                <td>PDF</td>
-                <td>20</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Passport</td>
-                <td>PDF</td>
-                <td>12</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Licence</td>
-                <td>PDF</td>
-                <td>9</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Pic</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>5</td>
-                <td>CNIC</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>6</td>
-                <td>Docx</td>
-                <td>Word</td>
-                <td>22</td>
-              </tr> 
+              <?php
+                include("connection.php");
+                $email = $_SESSION['loginGuard'];
+                $sql = "SELECT * FROM accounts WHERE email = '$email'";
+                $result = mysqli_query($conn, $sql);
+
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $sen_email = $_SESSION['loginGuard'];
+                        $sql = "SELECT * FROM utilitybills WHERE email5 = '$sen_email'";
+                        $result = mysqli_query($conn, $sql);
+
+                        if (mysqli_num_rows($result) > 0) {
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                ?>
+                                <tr>
+                                    <td><?php echo $row['type1']; ?></td>
+                                    <td><?php echo $row['accountno2']; ?></td>
+                                    <td><?php echo $row['email5']; ?></td>
+                                    <td>Rs <?php echo number_format($row['amount3']); ?></td>
+                                </tr>
+                                <?php
+                            }
+                        } else {
+                            echo "No transactions found";
+                        }
+                    }
+                } else {
+                    echo "No accounts found";
+                }
+              ?>
             </tbody>
           </table>
+        </div>
         </div>
       </div>
     </div>
     <div class="sidebar">
-      <h4>Accounts</h4>
-      
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-      
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
+    <h4>Accounts</h4>
+      <?php
+        include("connection.php");
+        $email = $_SESSION['loginGuard'];
+        $sql = "SELECT * FROM accounts WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
+
+      if (mysqli_num_rows($result) > 0) {
+          while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="balance">
+                  <i class="fa-solid fa-money-check-dollar icon"></i>
+                  <div class="info">
+                      <h5><?php echo $row['type']; ?></h5>
+                      <h5><?php echo $row['accountno']; ?></h5>
+                      <span><i class='fa-solid fa-rupee-sign'></i> <?php echo number_format($row['amount']); ?></span>
+                  </div>
+              </div>
+              <?php
+          }
+      } else {
+          echo "No accounts found";
+      }
+      mysqli_close($conn);
+      ?>
     </div>
   </div>
 </body>

@@ -13,8 +13,8 @@ if (isset($_POST['submit'])) {
 
   include("connection.php");
 
-  $name = $_POST['name'];
-  $nic = $_POST['nic'];
+  $email = $_POST['email'];
+  $amount = $_POST['amount'];
   $mobileno = $_POST['mobileno'];
   $type = $_POST['type'];
   $accountno = $_POST['accountno'];
@@ -25,7 +25,7 @@ if (isset($_POST['submit'])) {
     echo ("<ul>" . $errorMessage . "</ul>\n");
   } else {
 
-    $sql = "INSERT INTO accounts" . "(name,nic,mobileno,type,accountno) " . "VALUES ('$name','$nic','$mobileno','$type','$accountno')";
+    $sql = "INSERT INTO accounts" . "(email,amount,mobileno,type,accountno) " . "VALUES ('$email','$amount','$mobileno','$type','$accountno')";
 
     $results = mysqli_query($conn, $sql);
 
@@ -96,13 +96,13 @@ if (isset($_POST['submit'])) {
           <div class="card">
             <form name="accounts" action="" method="post">
               <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+                <label for="name">Email:</label>
+                <input type="text" id="email" name="email" required>
               </div>
 
               <div class="form-group">
-                <label for="nic">NIC:</label>
-                <input type="text" id="name" name="nic" required>
+                <label for="amount">Amount:</label>
+                <input type="text" id="amount" name="amount" required>
               </div>
 
               <div class="form-group">
@@ -172,44 +172,31 @@ if (isset($_POST['submit'])) {
       </div>
     </div>
     <div class="sidebar">
-      <h4>Accounts</h4>
+    <h4>Accounts</h4>
+      <?php
+        include("connection.php");
+        $email = $_SESSION['loginGuard'];
+        $sql = "SELECT * FROM accounts WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
 
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
+      if (mysqli_num_rows($result) > 0) {
+          while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="balance">
+                  <i class="fa-solid fa-money-check-dollar icon"></i>
+                  <div class="info">
+                      <h5><?php echo $row['type']; ?></h5>
+                      <h5><?php echo $row['accountno']; ?></h5>
+                      <span><i class='fa-solid fa-rupee-sign'></i> <?php echo number_format($row['amount']); ?></span>
+                  </div>
+              </div>
+              <?php
+          }
+      } else {
+          echo "No accounts found";
+      }
+      mysqli_close($conn);
+      ?>
     </div>
   </div>
 </body>

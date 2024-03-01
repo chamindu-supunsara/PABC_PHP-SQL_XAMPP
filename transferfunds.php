@@ -20,7 +20,8 @@ if (isset($_POST['submit'])) {
   $fund_transfer_type = $_POST['fund_transfer_type'];
   $beneficiary_account_no = $_POST['beneficiary_account_no'];
   $remarks = $_POST['remarks'];
-  $beneficiary_name = $_POST['beneficiary_name'];
+  $beneficiary_email = $_POST['beneficiary_email'];
+  $sender_email = $_POST['sender_email'];
 
   if (!empty($errorMessage)) {
     echo ("<p>There was an error with your form:</p>\n");
@@ -30,7 +31,7 @@ if (isset($_POST['submit'])) {
 
     $sql = "INSERT INTO fund_transfer" . "(source_account_number,
     transfer_amount,payment_type,account_type,fund_transfer_type,
-    beneficiary_account_no,remarks,beneficiary_name) " . "VALUES ('$source_account_number','$transfer_amount','$payment_type','$account_type','$fund_transfer_type','$beneficiary_account_no','$remarks','$beneficiary_name')";
+    beneficiary_account_no,remarks,beneficiary_email,sender_email) " . "VALUES ('$source_account_number','$transfer_amount','$payment_type','$account_type','$fund_transfer_type','$beneficiary_account_no','$remarks','$beneficiary_email','$sender_email')";
 
     $results = mysqli_query($conn, $sql);
 
@@ -96,15 +97,31 @@ if (isset($_POST['submit'])) {
         </div>
           <div class="card">
             <form name="fundtransfer" action="" method="post">
-              <div class="form-group">
-                <label for="source_account_number">Source Account Number:</label>
-                <select id="source_account_number" name="source_account_number" required>
-                  <option value="0" hidden>Select Type</option>
-                  <option value="Savings">Savings</option>
-                  <option value="Fixed">Fixed</option>
-                  <option value="Current">Current</option>
-                </select>
-              </div>
+              <?php
+              include("connection.php");
+              $email = $_SESSION['loginGuard'];
+              $sql = "SELECT * FROM accounts WHERE email = '$email'";
+              $result = mysqli_query($conn, $sql);
+
+              if (mysqli_num_rows($result) > 0) {
+                ?>
+                <div class="form-group">
+                  <label for="source_account_number">Source Account Number:</label>
+                  <select id="source_account_number" name="source_account_number" required>
+                      <option value="" hidden>Select Account</option>
+                      <?php
+                      while ($row = mysqli_fetch_assoc($result)) {
+                          echo "<option value='" . $row['accountno'] . "'>" . $row['accountno'] . " - " . $row['type'] . "</option>";
+                      }
+                      ?>
+                  </select>
+                </div>
+                <?php
+              } else {
+                echo "No accounts found";
+              }
+              mysqli_close($conn);
+              ?>
 
               <div class="form-group">
                 <label for="transfer_amount">Transfer Amount:</label>
@@ -151,8 +168,13 @@ if (isset($_POST['submit'])) {
               </div>
 
               <div class="form-group">
-                <label for="beneficiary_name">Beneficiary Name:</label>
-                <input type="text" id="beneficiary_name" name="beneficiary_name" required>
+                <label for="beneficiary_email">Beneficiary Email:</label>
+                <input type="email" id="beneficiary_email" name="beneficiary_email" required>
+              </div>
+
+              <div class="form-group">
+                <label for="sender_email">Beneficiary Email:</label>
+                <input type="email" id="sender_email" name="sender_email" value="<?php echo $_SESSION['loginGuard']; ?>">
               </div>
 
               <button type="submit" name="submit">Proceed</button>
@@ -161,44 +183,31 @@ if (isset($_POST['submit'])) {
           </div>
     </div>
     <div class="sidebar">
-      <h4>Accounts</h4>
-      
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-      
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
+    <h4>Accounts</h4>
+      <?php
+        include("connection.php");
+        $email = $_SESSION['loginGuard'];
+        $sql = "SELECT * FROM accounts WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
+
+      if (mysqli_num_rows($result) > 0) {
+          while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="balance">
+                  <i class="fa-solid fa-money-check-dollar icon"></i>
+                  <div class="info">
+                      <h5><?php echo $row['type']; ?></h5>
+                      <h5><?php echo $row['accountno']; ?></h5>
+                      <span><i class='fa-solid fa-rupee-sign'></i> <?php echo number_format($row['amount']); ?></span>
+                  </div>
+              </div>
+              <?php
+          }
+      } else {
+          echo "No accounts found";
+      }
+      mysqli_close($conn);
+      ?>
     </div>
   </div>
 </body>

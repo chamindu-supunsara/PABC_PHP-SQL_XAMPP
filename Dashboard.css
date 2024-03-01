@@ -156,6 +156,11 @@ nav{
   align-items: center;
   justify-content: space-between;
 }
+.history_list{
+  display: block;
+  align-items: center;
+  justify-content: space-between;
+}
 .row{
   display: flex;
   justify-content: space-between;

@@ -96,8 +96,7 @@ chart2.render();
     <div class="logo">
       <a href="#">Welcome</a>
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">

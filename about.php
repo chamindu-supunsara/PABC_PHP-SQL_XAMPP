@@ -27,8 +27,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
       <a href="#">Welcome</a>
       <img src="C:\Users\saman\Desktop\NIBM\WEB\Project\nibm 1.png" alt="Logo 1" class="logo">
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">

@@ -24,8 +24,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
     <div class="logo">
       <a href="#">Welcome Admin</a>
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">
@@ -37,12 +36,38 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
   </header>
   <div class="container">
     <div class="main-body">
-      <h2>Dashboard</h2>
-      <div class="promo_card">
-        <h1>Welcome to PABC</h1>
-        <span>Lorem ipsum dolor sit amet.</span>
-        <button>Learn More</button>
-      </div>
+      <div class="card">
+            <form name="fundtransfer" action="" method="post">
+
+              <div class="form-group">
+                <label for="transfer_amount">Transfer Amount:</label>
+                <input type="number" id="transfer_amount" name="transfer_amount" required>
+              </div>
+
+              <div class="form-group">
+                <label for="beneficiary_account_no">Beneficiary Account No:</label>
+                <input type="text" id="beneficiary_account_no" name="beneficiary_account_no" required>
+              </div>
+
+              <div class="form-group">
+                <label for="remarks">Remarks:</label>
+                <input type="text" id="remarks" name="remarks" required>
+              </div>
+
+              <div class="form-group">
+                <label for="beneficiary_email">Beneficiary Email:</label>
+                <input type="email" id="beneficiary_email" name="beneficiary_email" required>
+              </div>
+
+              <div class="form-group">
+                <label for="sender_email">Beneficiary Email:</label>
+                <input type="email" id="sender_email" name="sender_email" required>
+              </div>
+
+              <button type="submit" name="submit">Proceed</button>
+                <button type="button" name="Back" style="background-color: #000;" onclick="window.location.href = 'AdminAccounts.php';">Back</button>
+            </form>
+          </div>
     </div>
   </div>
 </body>

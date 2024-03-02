@@ -17,7 +17,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Transactions</title>
     <link rel="stylesheet" href="Dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
@@ -56,18 +56,22 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
       </div>
     </nav>
     <div class="main-body">
-      <h2>Dashboard</h2>
       <div class="promo_card">
-        <h1>Welcome to PABC</h1>
-        <span>Empowering your finances, one click at a time.</span>
-
+        <h1>All Transactions</h1>
       </div>
       <div class="history_list">
         <div class="list1">
           <div class="row">
             <h4>Funds Transactions</h4>
+            <script>
+              function tableToExcelTrans() {
+                var table2excel = new Table2Excel();
+                table2excel.export(document.querySelectorAll("table.tabletrans"));
+              }
+            </script>
+            <button onclick="tableToExcelTrans()">Download</button>
           </div>
-          <table>
+          <table class="tabletrans">
             <thead>
               <tr>
                 <th>Source Account No</th>
@@ -120,9 +124,16 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
         <div class="row">
         <div class="list2">
           <div class="row">
-            <h4>Mobile Bills Transactions</h4>
+            <h4>Mobile Bills Payments</h4>
+            <script>
+            function tableToExcel() {
+              var table2excel = new Table2Excel();
+              table2excel.export(document.querySelectorAll("table.table2"));
+            }
+            </script>
+            <button onclick="tableToExcel()">Download</button>
           </div>
-          <table>
+          <table class="table2">
             <thead>
               <tr>
                 <th>Provider</th>
@@ -168,9 +179,16 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
         </div>
         <div class="list2">
           <div class="row">
-            <h4>Utility Bills Transactions</h4>
+            <h4>Utility Bills Payments</h4>
+            <script>
+              function tableToExcelUtility() {
+                var table2excel = new Table2Excel();
+                table2excel.export(document.querySelectorAll("table.table3"));
+              }
+            </script>
+            <button onclick="tableToExcelUtility()">Download</button>
           </div>
-          <table>
+          <table class="table3">
             <thead>
               <tr>
                 <th>Type</th>
@@ -261,5 +279,7 @@ document.getElementById("logoutIcon").addEventListener("click", function() {
     window.location.href = "index.html";
 });
 </script>
+<script type="text/javascript" src="table2excel.js"></script>
+<script type="text/javascript" src="script.js"></script>
 
 </html>

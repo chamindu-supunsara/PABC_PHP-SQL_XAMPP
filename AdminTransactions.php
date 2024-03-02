@@ -16,7 +16,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="Dashboard.css">
+    <link rel="stylesheet" href="DashboardAdmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
 <body>
@@ -43,12 +43,6 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
         <a href="AdminAccounts.php" class="<?= $page == "AdminAccounts.php"? 'active':'' ?>">View Client Accounts</a>
         <a href="AdminManageUsers.php" class="<?= $page == "AdminManageUsers.php"? 'active':'' ?>">Manage Users</a>
         <a href="AdminTransactions.php" class="<?= $page == "AdminTransactions.php"? 'active':'' ?>">Manage Transactions</a>
-        <div class="links">
-          <span>Quick Link</span>
-          <a href="about.php" class="<?= $page == "about.php"? 'active':'' ?>">About Us</a>
-          <a href="contactus.php" class="<?= $page == "contactus.php"? 'active':'' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a>
-        </div>
       </div>
     </nav>
     <div class="main-body">
@@ -60,163 +54,71 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
       </div>
       <div class="history_lists">
         <div class="list1">
-          <div class="row">
-            <h4>History</h4>
-            <a href="#">See all</a>
+            <div class="row">
+              <h4>Funds Transactions</h4>
+              <script>
+                    function tableToExcelTrans() {
+                      var table2excel = new Table2Excel();
+                      table2excel.export(document.querySelectorAll("table.tableAllTrans"));
+                    }
+                  </script>
+                  <button onclick="tableToExcelTrans()"><i class="fas fa-download"></i> Report</button>
+            </div>
+            <table class="tableAllTrans">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Source Account No</th>
+                  <th>Account Type</th>
+                  <th>Beneficiary Account No</th>
+                  <th>Sender Email</th>
+                  <th>Beneficiary Email</th>
+                  <th>Payment Type</th>
+                  <th>Transfer Type</th>
+                  <th>Create Date</th>
+                  <th>Tranfer Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php
+                  include("connection.php");
+                  $sql = "SELECT * FROM accounts";
+                  $result = mysqli_query($conn, $sql);
+
+                  if (mysqli_num_rows($result) > 0) {
+                      while ($row = mysqli_fetch_assoc($result)) {
+                          $sql = "SELECT * FROM fund_transfer";
+                          $result = mysqli_query($conn, $sql);
+
+                          if (mysqli_num_rows($result) > 0) {
+                              while ($row = mysqli_fetch_assoc($result)) {
+                                  ?>
+                                  <tr>
+                                      <td><?php echo $row['id']; ?></td>
+                                      <td><?php echo $row['source_account_number']; ?></td>
+                                      <td><?php echo $row['account_type']; ?></td>
+                                      <td><?php echo $row['beneficiary_account_no']; ?></td>
+                                      <td><?php echo $row['sender_email']; ?></td>
+                                      <td><?php echo $row['beneficiary_email']; ?></td>
+                                      <td><?php echo $row['payment_type']; ?></td>
+                                      <td><?php echo $row['fund_transfer_type']; ?></td>
+                                      <td><?php echo $row['date']; ?></td>
+                                      <td>Rs <?php echo number_format($row['transfer_amount']); ?></td>
+                                  </tr>
+                                  <?php
+                              }
+                          } else {
+                              echo "No transactions found";
+                          }
+                      }
+                  } else {
+                      echo "No accounts found";
+                  }
+                ?>
+              </tbody>
+            </table>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Dates</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Ammount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>2, Aug, 2022</td>
-                <td>Sam Tonny</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>29, July, 2022</td>
-                
-                <td>Code Info</td>
-                <td>Silver</td>
-                <td>$5,000.00</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>15, July, 2022</td>
-              
-                <td>Jhon David</td>
-                <td>Startup</td>
-                <td>$3000.00</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>5, July, 2022</td>
-                <td>Salina Gomiz</td>
-                <td>Premimum</td>
-                <td>$7000.00</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>29, June, 2022</td>
-                <td>Gomiz</td>
-                <td>Gold</td>
-                <td>$4000.00</td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>28, June, 2022</td>
-                <td>Elyana Jhon</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
-        <div class="list2">
-          <div class="row">
-            <h4>Documnets</h4>
-            <a href="#">Upload</a>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Uplaoded</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>CNIC</td>
-                <td>PDF</td>
-                <td>20</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Passport</td>
-                <td>PDF</td>
-                <td>12</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Licence</td>
-                <td>PDF</td>
-                <td>9</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Pic</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>5</td>
-                <td>CNIC</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>6</td>
-                <td>Docx</td>
-                <td>Word</td>
-                <td>22</td>
-              </tr> 
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="sidebar">
-      <h4>Accounts</h4>
-      
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-      
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
     </div>
   </div>
 </body>
@@ -235,5 +137,7 @@ document.getElementById("logoutIcon").addEventListener("click", function() {
     window.location.href = "index.html";
 });
 </script>
+<script type="text/javascript" src="table2excel.js"></script>
+<script type="text/javascript" src="script.js"></script>
 
 </html>

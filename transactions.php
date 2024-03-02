@@ -69,7 +69,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
                 table2excel.export(document.querySelectorAll("table.tabletrans"));
               }
             </script>
-            <button onclick="tableToExcelTrans()">Download</button>
+            <button onclick="tableToExcelTrans()"><i class="fas fa-download"></i> Download</button>
           </div>
           <table class="tabletrans">
             <thead>
@@ -131,7 +131,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
               table2excel.export(document.querySelectorAll("table.table2"));
             }
             </script>
-            <button onclick="tableToExcel()">Download</button>
+            <button onclick="tableToExcel()"><i class="fas fa-download"></i> Download</button>
           </div>
           <table class="table2">
             <thead>
@@ -186,7 +186,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
                 table2excel.export(document.querySelectorAll("table.table3"));
               }
             </script>
-            <button onclick="tableToExcelUtility()">Download</button>
+            <button onclick="tableToExcelUtility()"><i class="fas fa-download"></i> Download</button>
           </div>
           <table class="table3">
             <thead>

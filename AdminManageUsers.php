@@ -15,7 +15,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Manage Users</title>
     <link rel="stylesheet" href="DashboardAdmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
@@ -45,16 +45,13 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
       </div>
     </nav>
     <div class="main-body">
-      <h2>Dashboard</h2>
       <div class="promo_card">
-        <h1>Welcome to PABC</h1>
-        <span>Lorem ipsum dolor sit amet.</span>
-        <button>Learn More</button>
+        <h1>All Users</h1>
       </div>
         <div class="history_lists">
           <div class="list2">
                 <div class="row">
-                  <h4>User Details</h4>
+                  <h3>User Details</h3>
                   <script>
                     function tableToExcelTrans() {
                       var table2excel = new Table2Excel();
@@ -75,6 +72,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
                       <th>Email</th>
                       <th></th>
                       <th>Nic</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -101,6 +99,12 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
                                           <td><?php echo $row['email']; ?></td>
                                           <td></td>
                                           <td><?php echo $row['nic']; ?></td>
+                                          <td>
+                                            <div class="row">
+                                              <button onclick="location.href='AdminEditUsers.php?clientid=<?php echo $row['clientid']; ?>'">Edit</button>
+                                              <button class="" style="margin-left: 2px; background-color: red; color: white;" onclick="location.href='deleteUser.php?clientid=<?php echo $row['clientid']; ?>'">Delete</button>
+                                            </div>
+                                          </td>
                                       </tr>
                                       <?php
                                   }

@@ -45,16 +45,13 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
       </div>
     </nav>
     <div class="main-body">
-      <h2>Dashboard</h2>
       <div class="promo_card">
-        <h1>Welcome to PABC</h1>
-        <span>Lorem ipsum dolor sit amet.</span>
-        <button>Learn More</button>
+        <h1>All Accounts</h1>
       </div>
       <div class="history_lists">
       <div class="list1">
             <div class="row">
-              <h4>View All Accounts</h4>
+              <h3>Manage Accounts</h3>
               <script>
               function tableToExcelTrans() {
                 var table2excel = new Table2Excel();
@@ -111,8 +108,8 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
                                         <td></td>
                                         <td>
                                           <div class="row">
-                                            <button onclick="location.href='AdminEditAccount.php?accountno=<?php echo $row['clientid']; ?>'">Edit</button>
-                                            <button class="" style="margin-left: 2px; background-color: red; color: white;" onclick="location.href='AdminEditAccount.php?accountno=<?php echo $row['clientid']; ?>'">Delete</button>
+                                            <button onclick="location.href='AdminEditAccount.php?clientid=<?php echo $row['clientid']; ?>'">Edit</button>
+                                            <button class="" style="margin-left: 2px; background-color: red; color: white;" onclick="location.href='delete.php?clientid=<?php echo $row['clientid']; ?>'">Delete</button>
                                           </div>
                                         </td>
                                     </tr>

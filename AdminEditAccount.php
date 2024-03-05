@@ -65,7 +65,7 @@ $row= mysqli_fetch_array($result);
 
               <div class="form-group">
                 <label for="amount">Amount:</label>
-                <input type="text" id="amount" name="amount" value="<?php echo $row['amount']; ?>" required>
+                <input type="number" id="amount" name="amount" value="<?php echo $row['amount']; ?>" required>
               </div>
 
               <div class="form-group">

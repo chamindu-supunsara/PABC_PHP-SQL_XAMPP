@@ -33,16 +33,21 @@ if (isset($_POST['submit'])) {
     transfer_amount,payment_type,account_type,fund_transfer_type,
     beneficiary_account_no,remarks,beneficiary_email,sender_email) " . "VALUES ('$source_account_number','$transfer_amount','$payment_type','$account_type','$fund_transfer_type','$beneficiary_account_no','$remarks','$beneficiary_email','$sender_email')";
 
+    $updateSql = "UPDATE accounts SET amount = amount - $transfer_amount WHERE accountno = $source_account_number";
+
     $results = mysqli_query($conn, $sql);
+    $updateResult = mysqli_query($conn, $updateSql);
 
     if (!$results) {
       die('Could not enter data: ' . mysqli_error($conn));
     } else {
       $successMessage = "Funds Transfer Successfully!";
       echo "<script>alert('$successMessage');</script>";
-
-      // Redirect to LoginCustomer page after a delay
       echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+    }
+
+    if (!$updateResult) {
+      die('Could not update account balance: ' . mysqli_error($conn));
     }
   }
 }
@@ -53,7 +58,7 @@ if (isset($_POST['submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Tranfer Funds</title>
     <link rel="stylesheet" href="transfund.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
@@ -86,7 +91,7 @@ if (isset($_POST['submit'])) {
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php"? 'active':'' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php"? 'active':'' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
@@ -159,6 +164,7 @@ if (isset($_POST['submit'])) {
               <div class="form-group">
                 <label for="beneficiary_account_no">Beneficiary Account No:</label>
                 <input type="text" id="beneficiary_account_no" name="beneficiary_account_no" required>
+                <span id="mobile-error" style="color: red; display: none; font-size: 12px;">Please enter a valid account number.</span>
               </div>
 
               <div class="form-group">
@@ -224,6 +230,20 @@ document.getElementById("logoutIcon").addEventListener("click", function() {
     localStorage.clear();
     window.location.href = "index.html";
 });
+</script>
+
+<script>
+    var mobileInput1 = document.getElementById("beneficiary_account_no");
+    var errorMessage = document.getElementById("mobile-error");
+
+    mobileInput1.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d*$/;
+      if (mobileNumberPattern.test(mobileInput1.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
 </script>
 
 </html>

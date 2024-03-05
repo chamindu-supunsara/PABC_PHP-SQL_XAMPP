@@ -54,6 +54,7 @@ if ($row != null) {
                 <input type="text" id="name" name="name" placeholder="Name">
                 <input type="text" id="nic" name="nic" placeholder="NIC">
                 <input type="text" id="phoneno" name="phoneno" placeholder="Phone No">
+                <span id="mobile-error-msg" style="color: red; display: none; font-size: 12px;">Please enter a valid mobile number.</span>
                 <input type="email" id="email" name="email" placeholder="Email">
                 <input type="password" id="password" name="password" placeholder="Password">
                 <br>
@@ -89,5 +90,19 @@ if ($row != null) {
 
     <script src="script.js"></script>
 </body>
+
+<script>
+    var mobileInput = document.getElementById("phoneno");
+    var errorMessage = document.getElementById("mobile-error-msg");
+
+    mobileInput.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d{10}$/;
+      if (mobileNumberPattern.test(mobileInput.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
+</script>
 
 </html>

@@ -27,7 +27,10 @@ if (isset($_POST['submitmobile'])) {
 
     $sql = "INSERT INTO bills" . "(type,accountno,amount,mobileno,email) " . "VALUES ('$type','$accountno','$amount','$mobileno','$email')";
 
+    $updateSql = "UPDATE accounts SET amount = amount - $amount WHERE accountno = $accountno";
+
     $results = mysqli_query($conn, $sql);
+    $updateResult = mysqli_query($conn, $updateSql);
 
     if (!$results) {
       die('Could not enter data: ' . mysqli_error($conn));
@@ -37,6 +40,10 @@ if (isset($_POST['submitmobile'])) {
 
       // Redirect to LoginCustomer page after a delay
       echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+    }
+
+    if (!$updateResult) {
+      die('Could not update account balance: ' . mysqli_error($conn));
     }
   }
 }
@@ -59,7 +66,10 @@ if (isset($_POST['submitbill'])) {
 
     $sql = "INSERT INTO utilitybills" . "(type1,accountno2,amount3,mobileno4,email5) " . "VALUES ('$type1','$accountno2','$amount3','$mobileno4','$email5')";
 
+    $updateSql = "UPDATE accounts SET amount = amount - $amount3 WHERE accountno = $accountno2";
+
     $results = mysqli_query($conn, $sql);
+    $updateResult = mysqli_query($conn, $updateSql);
 
     if (!$results) {
       die('Could not enter data: ' . mysqli_error($conn));
@@ -69,6 +79,10 @@ if (isset($_POST['submitbill'])) {
 
       // Redirect to LoginCustomer page after a delay
       echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+    }
+
+    if (!$updateResult) {
+      die('Could not update account balance: ' . mysqli_error($conn));
     }
   }
 }
@@ -81,7 +95,7 @@ if (isset($_POST['submitbill'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
-  <link rel="stylesheet" href="Dashboard.css">
+  <link rel="stylesheet" href="bill.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
 
@@ -114,7 +128,7 @@ if (isset($_POST['submitbill'])) {
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php" ? 'active' : '' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php" ? 'active' : '' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php" ? 'active' : '' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php" ? 'active' : '' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
@@ -153,24 +167,46 @@ if (isset($_POST['submitbill'])) {
                 </select>
               </div>
 
-              <div class="form-group">
-                <label for="accountno">Account No:</label>
-                <input type="text" id="accountno" name="accountno" required>
-              </div>
+              <?php
+              include("connection.php");
+              $email = $_SESSION['loginGuard'];
+              $sql = "SELECT * FROM accounts WHERE email = '$email'";
+              $result = mysqli_query($conn, $sql);
+
+              if (mysqli_num_rows($result) > 0) {
+                ?>
+                <div class="form-group">
+                  <label for="accountno">Source Account Number:</label>
+                  <select id="accountno" name="accountno" required>
+                      <option value="" hidden>Select Account</option>
+                      <?php
+                      while ($row = mysqli_fetch_assoc($result)) {
+                          echo "<option value='" . $row['accountno'] . "'>" . $row['accountno'] . " - " . $row['type'] . "</option>";
+                      }
+                      ?>
+                  </select>
+                </div>
+                <?php
+              } else {
+                echo "No accounts found";
+              }
+              mysqli_close($conn);
+              ?>
 
               <div class="form-group">
                 <label for="amount">Amount:</label>
-                <input type="text" id="amount" name="amount" required>
+                <input type="number" id="amount" name="amount" required>
               </div>
 
               <div class="form-group">
                 <label for="mobileno">Mobile No:</label>
                 <input type="text" id="mobileno" name="mobileno" required>
+                <span id="mobile-error-msg" style="color: red; display: none; font-size: 12px;">Please enter a valid mobile number.</span>
               </div>
 
               <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="text" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="<?php echo $_SESSION['loginGuard']; ?>" required>
               </div>
 
               <button type="submit" name="submitmobile">Pay Now</button>
@@ -195,29 +231,47 @@ if (isset($_POST['submitbill'])) {
                   <option value="Other">Other</option>
                 </select>
               </div>
-              <!-- <div class="form-group">
-                <label for="type1">Bill Type:</label>
-                <input type="text" id="type1" name="type1" required>
-              </div> -->
 
-              <div class="form-group">
-                <label for="accountno2">Account No:</label>
-                <input type="text" id="accountno2" name="accountno2" required>
-              </div>
+              <?php
+              include("connection.php");
+              $email = $_SESSION['loginGuard'];
+              $sql = "SELECT * FROM accounts WHERE email = '$email'";
+              $result = mysqli_query($conn, $sql);
+
+              if (mysqli_num_rows($result) > 0) {
+                ?>
+                <div class="form-group">
+                  <label for="accountno2">Source Account Number:</label>
+                  <select id="accountno2" name="accountno2" required>
+                      <option value="" hidden>Select Account</option>
+                      <?php
+                      while ($row = mysqli_fetch_assoc($result)) {
+                          echo "<option value='" . $row['accountno'] . "'>" . $row['accountno'] . " - " . $row['type'] . "</option>";
+                      }
+                      ?>
+                  </select>
+                </div>
+                <?php
+              } else {
+                echo "No accounts found";
+              }
+              mysqli_close($conn);
+              ?>
 
               <div class="form-group">
                 <label for="amount3">Amount:</label>
-                <input type="text" id="amount3" name="amount3" required>
+                <input type="number" id="amount3" name="amount3" required>
               </div>
 
               <div class="form-group">
-                <label for="mobileno4">Mobile No:</label>
+                <label for="mobileno4">Account No:</label>
                 <input type="text" id="mobileno4" name="mobileno4" required>
+                <span id="mobile-error" style="color: red; display: none; font-size: 12px;">Please enter a valid account number.</span>
               </div>
 
               <div class="form-group">
                 <label for="email5">Email:</label>
-                <input type="text" id="email5" name="email5" required>
+                <input type="email" id="email5" name="email5" value="<?php echo $_SESSION['loginGuard']; ?>" required>
               </div>
 
               <button type="submit" name="submitbill">Pay Now</button>
@@ -270,5 +324,32 @@ if (isset($_POST['submitbill'])) {
     window.location.href = "index.html";
   });
 </script>
+
+<script>
+    var mobileInput = document.getElementById("mobileno");
+    var errorMessage = document.getElementById("mobile-error-msg");
+
+    var mobileInput1 = document.getElementById("mobileno4");
+    var errorMessage = document.getElementById("mobile-error");
+
+    mobileInput.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d{10}$/;
+      if (mobileNumberPattern.test(mobileInput.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
+
+    mobileInput1.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d*$/;
+      if (mobileNumberPattern.test(mobileInput1.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
+</script>
+
 
 </html>

@@ -47,7 +47,7 @@ if (isset($_POST['submit'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Accounts</title>
   <link rel="stylesheet" href="Dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
@@ -81,7 +81,7 @@ if (isset($_POST['submit'])) {
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php" ? 'active' : '' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php" ? 'active' : '' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php" ? 'active' : '' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php" ? 'active' : '' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
@@ -94,37 +94,55 @@ if (isset($_POST['submit'])) {
           </div>
           <div class="card">
             <form name="accounts" action="" method="post">
-              <div class="form-group">
-                <label for="name">Email:</label>
-                <input type="text" id="email" name="email" required>
-              </div>
+            <?php
+              include("connection.php");
+              $email = $_SESSION['loginGuard'];
+              $sql = "SELECT * FROM customer_register WHERE email = '$email'";
 
-              <div class="form-group">
-                <label for="amount">Amount:</label>
-                <input type="text" id="amount" name="amount" required>
-              </div>
+              $result = mysqli_query($conn, $sql);
 
-              <div class="form-group">
-                <label for="mobileno">Mobile No:</label>
-                <input type="text" id="mobileno" name="mobileno" required>
-              </div>
+              if($result) {
+                if(mysqli_num_rows($result) > 0) {
+                  while($row = mysqli_fetch_array($result)) {
 
-              <div class="form-group">
-                <label for="accountno">Account No:</label>
-                <input type="password" id="accountno" name="accountno" required>
-              </div>
+                    ?>
+                    <div class="form-group">
+                      <label for="name">Email:</label>
+                      <input type="email" id="email" name="email" value="<?php echo $row['email']; ?>" required>
+                    </div>
 
-              <div class="form-group">
-                <label for="type">Account Type:</label>
-                <select id="type" name="type" required>
-                  <option value="0" hidden>Select Type</option>
-                  <option value="Savings">Savings</option>
-                  <option value="Fixed">Fixed</option>
-                  <option value="Current">Current</option>
-                </select>
-              </div>
+                    <div class="form-group">
+                      <label for="amount">Amount:</label>
+                      <input type="number" id="amount" name="amount" required>
+                    </div>
 
-              <button type="submit" name="submit">Create</button>
+                    <div class="form-group">
+                      <label for="mobileno">Mobile No:</label>
+                      <input type="text" id="mobileno" name="mobileno" required>
+                      <span id="mobile-error-msg" style="color: red; display: none; font-size: 12px;">Please enter a valid mobile number.</span>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="accountno">Account No:</label>
+                      <input type="password" id="accountno" name="accountno" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="type">Account Type:</label>
+                      <select id="type" name="type" required>
+                        <option value="0" hidden>Select Type</option>
+                        <option value="Savings">Savings</option>
+                        <option value="Fixed">Fixed</option>
+                        <option value="Current">Current</option>
+                      </select>
+                    </div>
+
+                    <button type="submit" name="submit">Create</button>
+              <?php
+                }
+              }
+            }
+              ?>
             </form>
           </div>
         </div>
@@ -225,6 +243,20 @@ if (isset($_POST['submit'])) {
       // Set the generated number as the value of the input field
       document.getElementById("accountno").value = uniqueNumber;
   }
+</script>
+
+<script>
+    var mobileInput = document.getElementById("mobileno");
+    var errorMessage = document.getElementById("mobile-error-msg");
+
+    mobileInput.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d{10}$/;
+      if (mobileNumberPattern.test(mobileInput.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
 </script>
 
 </html>

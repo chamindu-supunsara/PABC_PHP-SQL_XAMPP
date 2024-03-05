@@ -76,7 +76,7 @@ if (isset($_POST['submit'])) {
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php"? 'active':'' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php"? 'active':'' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>

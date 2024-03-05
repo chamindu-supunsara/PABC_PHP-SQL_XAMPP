@@ -120,7 +120,7 @@ chart2.render();
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php"? 'active':'' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php"? 'active':'' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
@@ -145,9 +145,9 @@ chart2.render();
       </div>
       
       <div class="history_list">
-        <div class="list1">
+        <div class="list2">
             <div class="row">
-              <h4>Accounts</h4>
+              <h4>Accounts & User Details</h4>
             </div>
             <div class="row">
               <table>
@@ -194,9 +194,9 @@ chart2.render();
                 </tbody>
               </table>
               <div class="list2" style="margin-left: 10px;">
-                <div class="row">
+                <!-- <div class="row">
                   <h4>User Details</h4>
-                </div>
+                </div> -->
                 <table>
                   <thead>
                     <tr>

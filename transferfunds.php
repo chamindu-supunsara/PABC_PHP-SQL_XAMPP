@@ -7,48 +7,58 @@ if (!isset($_SESSION['loginGuard'])) {
     exit();
 }
 
-$page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 1);
-
+// Check if the submit button is clicked
 if (isset($_POST['submit'])) {
 
   include("connection.php");
 
   $source_account_number = $_POST['source_account_number'];
   $transfer_amount = $_POST['transfer_amount'];
-  $payment_type = $_POST['payment_type'];
-  $account_type = $_POST['account_type'];
-  $fund_transfer_type = $_POST['fund_transfer_type'];
-  $beneficiary_account_no = $_POST['beneficiary_account_no'];
-  $remarks = $_POST['remarks'];
-  $beneficiary_email = $_POST['beneficiary_email'];
-  $sender_email = $_POST['sender_email'];
 
-  if (!empty($errorMessage)) {
-    echo ("<p>There was an error with your form:</p>\n");
+  // Check if the source account has sufficient balance
+  $check_balance_sql = "SELECT amount FROM accounts WHERE accountno = $source_account_number";
+  $balance_result = mysqli_query($conn, $check_balance_sql);
 
-    echo ("<ul>" . $errorMessage . "</ul>\n");
-  } else { //if(!empty($errorMessage))
+  if ($balance_result && mysqli_num_rows($balance_result) > 0) {
+    $row = mysqli_fetch_assoc($balance_result);
+    $current_balance = $row['amount'];
 
-    $sql = "INSERT INTO fund_transfer" . "(source_account_number,
-    transfer_amount,payment_type,account_type,fund_transfer_type,
-    beneficiary_account_no,remarks,beneficiary_email,sender_email) " . "VALUES ('$source_account_number','$transfer_amount','$payment_type','$account_type','$fund_transfer_type','$beneficiary_account_no','$remarks','$beneficiary_email','$sender_email')";
+    if ($current_balance >= $transfer_amount) {
+      // Update balance
+      $updated_balance = $current_balance - $transfer_amount;
+      $updateSql = "UPDATE accounts SET amount = $updated_balance WHERE accountno = $source_account_number";
+      $updateResult = mysqli_query($conn, $updateSql);
 
-    $updateSql = "UPDATE accounts SET amount = amount - $transfer_amount WHERE accountno = $source_account_number";
+      if (!$updateResult) {
+        die('Could not update account balance: ' . mysqli_error($conn));
+      }
 
-    $results = mysqli_query($conn, $sql);
-    $updateResult = mysqli_query($conn, $updateSql);
+      // Insert transfer record
+      $payment_type = $_POST['payment_type'];
+      $account_type = $_POST['account_type'];
+      $fund_transfer_type = $_POST['fund_transfer_type'];
+      $beneficiary_account_no = $_POST['beneficiary_account_no'];
+      $remarks = $_POST['remarks'];
+      $beneficiary_email = $_POST['beneficiary_email'];
+      $sender_email = $_POST['sender_email'];
 
-    if (!$results) {
-      die('Could not enter data: ' . mysqli_error($conn));
+      $sql = "INSERT INTO fund_transfer (source_account_number, transfer_amount, payment_type, account_type, fund_transfer_type, beneficiary_account_no, remarks, beneficiary_email, sender_email) VALUES ('$source_account_number', '$transfer_amount', '$payment_type', '$account_type', '$fund_transfer_type', '$beneficiary_account_no', '$remarks', '$beneficiary_email', '$sender_email')";
+      $results = mysqli_query($conn, $sql);
+
+      if (!$results) {
+        die('Could not enter data: ' . mysqli_error($conn));
+      } else {
+        $successMessage = "Funds Transfer Successful!";
+        echo "<script>alert('$successMessage');</script>";
+        echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; }, 1000);</script>";
+      }
     } else {
-      $successMessage = "Funds Transfer Successfully!";
-      echo "<script>alert('$successMessage');</script>";
-      echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+      $errorMessage = "Insufficient balance in the source account!";
+      echo "<script>alert('$errorMessage');</script>";
     }
-
-    if (!$updateResult) {
-      die('Could not update account balance: ' . mysqli_error($conn));
-    }
+  } else {
+    $errorMessage = "Source account not found!";
+    echo "<script>alert('$errorMessage');</script>";
   }
 }
 

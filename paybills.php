@@ -13,38 +13,51 @@ if (isset($_POST['submitmobile'])) {
 
   include("connection.php");
 
-  $type = $_POST['type'];
-  $accountno = $_POST['accountno'];
-  $amount = $_POST['amount'];
-  $mobileno = $_POST['mobileno'];
-  $email = $_POST['email'];
+  // Sanitize inputs
+  $type = mysqli_real_escape_string($conn, $_POST['type']);
+  $accountno = mysqli_real_escape_string($conn, $_POST['accountno']);
+  $amount = mysqli_real_escape_string($conn, $_POST['amount']);
+  $mobileno = mysqli_real_escape_string($conn, $_POST['mobileno']);
+  $email = mysqli_real_escape_string($conn, $_POST['email']);
 
-  if (!empty($errorMessage)) {
-    echo ("<p>There was an error with your form:</p>\n");
+  // Check for sufficient balance
+  $check_balance_sql = "SELECT amount FROM accounts WHERE accountno = $accountno";
+  $balance_result = mysqli_query($conn, $check_balance_sql);
 
-    echo ("<ul>" . $errorMessage . "</ul>\n");
-  } else { //if(!empty($errorMessage))
+  if ($balance_result && mysqli_num_rows($balance_result) > 0) {
+    $row = mysqli_fetch_assoc($balance_result);
+    $current_balance = $row['amount'];
 
-    $sql = "INSERT INTO bills" . "(type,accountno,amount,mobileno,email) " . "VALUES ('$type','$accountno','$amount','$mobileno','$email')";
+    if ($current_balance >= $amount) {
+      // Update balance
+      $updated_balance = $current_balance - $amount;
+      $updateSql = "UPDATE accounts SET amount = $updated_balance WHERE accountno = $accountno";
+      $updateResult = mysqli_query($conn, $updateSql);
 
-    $updateSql = "UPDATE accounts SET amount = amount - $amount WHERE accountno = $accountno";
+      if (!$updateResult) {
+        die('Could not update account balance: ' . mysqli_error($conn));
+      }
 
-    $results = mysqli_query($conn, $sql);
-    $updateResult = mysqli_query($conn, $updateSql);
+      // Insert payment record
+      $sql = "INSERT INTO bills (type, accountno, amount, mobileno, email) VALUES ('$type', '$accountno', '$amount', '$mobileno', '$email')";
+      $results = mysqli_query($conn, $sql);
 
-    if (!$results) {
-      die('Could not enter data: ' . mysqli_error($conn));
+      if (!$results) {
+        die('Could not enter data: ' . mysqli_error($conn));
+      } else {
+        $successMessage = "Payment Successful!";
+        echo "<script>alert('$successMessage');</script>";
+
+        // Redirect to Dashboard page after a delay
+        echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; }, 1000);</script>";
+      }
     } else {
-      $successMessage = "Payment Successfully!";
-      echo "<script>alert('$successMessage');</script>";
-
-      // Redirect to LoginCustomer page after a delay
-      echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+      $errorMessage = "Insufficient balance in the account!";
+      echo "<script>alert('$errorMessage');</script>";
     }
-
-    if (!$updateResult) {
-      die('Could not update account balance: ' . mysqli_error($conn));
-    }
+  } else {
+    $errorMessage = "Account not found!";
+    echo "<script>alert('$errorMessage');</script>";
   }
 }
 
@@ -52,38 +65,51 @@ if (isset($_POST['submitbill'])) {
 
   include("connection.php");
 
-  $type1 = $_POST['type1'];
-  $accountno2 = $_POST['accountno2'];
-  $amount3 = $_POST['amount3'];
-  $mobileno4 = $_POST['mobileno4'];
-  $email5 = $_POST['email5'];
+  // Sanitize inputs
+  $type1 = mysqli_real_escape_string($conn, $_POST['type1']);
+  $accountno2 = mysqli_real_escape_string($conn, $_POST['accountno2']);
+  $amount3 = mysqli_real_escape_string($conn, $_POST['amount3']);
+  $mobileno4 = mysqli_real_escape_string($conn, $_POST['mobileno4']);
+  $email5 = mysqli_real_escape_string($conn, $_POST['email5']);
 
-  if (!empty($errorMessage)) {
-    echo ("<p>There was an error with your form:</p>\n");
+  // Check for sufficient balance
+  $check_balance_sql = "SELECT amount FROM accounts WHERE accountno = $accountno2";
+  $balance_result = mysqli_query($conn, $check_balance_sql);
 
-    echo ("<ul>" . $errorMessage . "</ul>\n");
-  } else { //if(!empty($errorMessage))
+  if ($balance_result && mysqli_num_rows($balance_result) > 0) {
+    $row = mysqli_fetch_assoc($balance_result);
+    $current_balance = $row['amount'];
 
-    $sql = "INSERT INTO utilitybills" . "(type1,accountno2,amount3,mobileno4,email5) " . "VALUES ('$type1','$accountno2','$amount3','$mobileno4','$email5')";
+    if ($current_balance >= $amount3) {
+      // Update balance
+      $updated_balance = $current_balance - $amount3;
+      $updateSql = "UPDATE accounts SET amount = $updated_balance WHERE accountno = $accountno2";
+      $updateResult = mysqli_query($conn, $updateSql);
 
-    $updateSql = "UPDATE accounts SET amount = amount - $amount3 WHERE accountno = $accountno2";
+      if (!$updateResult) {
+        die('Could not update account balance: ' . mysqli_error($conn));
+      }
 
-    $results = mysqli_query($conn, $sql);
-    $updateResult = mysqli_query($conn, $updateSql);
+      // Insert payment record
+      $sql = "INSERT INTO utilitybills (type1, accountno2, amount3, mobileno4, email5) VALUES ('$type1', '$accountno2', '$amount3', '$mobileno4', '$email5')";
+      $results = mysqli_query($conn, $sql);
 
-    if (!$results) {
-      die('Could not enter data: ' . mysqli_error($conn));
+      if (!$results) {
+        die('Could not enter data: ' . mysqli_error($conn));
+      } else {
+        $successMessage = "Payment Successful!";
+        echo "<script>alert('$successMessage');</script>";
+
+        // Redirect to Dashboard page after a delay
+        echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; }, 1000);</script>";
+      }
     } else {
-      $successMessage = "Payment Successfully!";
-      echo "<script>alert('$successMessage');</script>";
-
-      // Redirect to LoginCustomer page after a delay
-      echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+      $errorMessage = "Insufficient balance in the account!";
+      echo "<script>alert('$errorMessage');</script>";
     }
-
-    if (!$updateResult) {
-      die('Could not update account balance: ' . mysqli_error($conn));
-    }
+  } else {
+    $errorMessage = "Account not found!";
+    echo "<script>alert('$errorMessage');</script>";
   }
 }
 ?>
@@ -94,7 +120,7 @@ if (isset($_POST['submitbill'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Bill Payments</title>
   <link rel="stylesheet" href="bill.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>

@@ -13,8 +13,8 @@ if (isset($_POST['submit'])) {
 
   include("connection.php");
 
-  $name = $_POST['name'];
-  $nic = $_POST['nic'];
+  $email = $_POST['email'];
+  $amount = $_POST['amount'];
   $mobileno = $_POST['mobileno'];
   $type = $_POST['type'];
   $accountno = $_POST['accountno'];
@@ -25,7 +25,7 @@ if (isset($_POST['submit'])) {
     echo ("<ul>" . $errorMessage . "</ul>\n");
   } else {
 
-    $sql = "INSERT INTO accounts" . "(name,nic,mobileno,type,accountno) " . "VALUES ('$name','$nic','$mobileno','$type','$accountno')";
+    $sql = "INSERT INTO accounts" . "(email,amount,mobileno,type,accountno) " . "VALUES ('$email','$amount','$mobileno','$type','$accountno')";
 
     $results = mysqli_query($conn, $sql);
 
@@ -47,7 +47,7 @@ if (isset($_POST['submit'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Accounts</title>
   <link rel="stylesheet" href="Dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
@@ -57,8 +57,7 @@ if (isset($_POST['submit'])) {
     <div class="logo">
       <a href="#">Welcome</a>
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">
@@ -82,7 +81,7 @@ if (isset($_POST['submit'])) {
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php" ? 'active' : '' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php" ? 'active' : '' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php" ? 'active' : '' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php" ? 'active' : '' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
@@ -95,37 +94,55 @@ if (isset($_POST['submit'])) {
           </div>
           <div class="card">
             <form name="accounts" action="" method="post">
-              <div class="form-group">
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-              </div>
+            <?php
+              include("connection.php");
+              $email = $_SESSION['loginGuard'];
+              $sql = "SELECT * FROM customer_register WHERE email = '$email'";
 
-              <div class="form-group">
-                <label for="nic">NIC:</label>
-                <input type="text" id="name" name="nic" required>
-              </div>
+              $result = mysqli_query($conn, $sql);
 
-              <div class="form-group">
-                <label for="mobileno">Mobile No:</label>
-                <input type="text" id="mobileno" name="mobileno" required>
-              </div>
+              if($result) {
+                if(mysqli_num_rows($result) > 0) {
+                  while($row = mysqli_fetch_array($result)) {
 
-              <div class="form-group">
-                <label for="accountno">Account No:</label>
-                <input type="password" id="accountno" name="accountno" required>
-              </div>
+                    ?>
+                    <div class="form-group">
+                      <label for="name">Email:</label>
+                      <input type="email" id="email" name="email" value="<?php echo $row['email']; ?>" required>
+                    </div>
 
-              <div class="form-group">
-                <label for="type">Account Type:</label>
-                <select id="type" name="type" required>
-                  <option value="0" hidden>Select Type</option>
-                  <option value="Savings">Savings</option>
-                  <option value="Fixed">Fixed</option>
-                  <option value="Current">Current</option>
-                </select>
-              </div>
+                    <div class="form-group">
+                      <label for="amount">Amount:</label>
+                      <input type="number" id="amount" name="amount" required>
+                    </div>
 
-              <button type="submit" name="submit">Create</button>
+                    <div class="form-group">
+                      <label for="mobileno">Mobile No:</label>
+                      <input type="text" id="mobileno" name="mobileno" required>
+                      <span id="mobile-error-msg" style="color: red; display: none; font-size: 12px;">Please enter a valid mobile number.</span>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="accountno">Account No:</label>
+                      <input type="password" id="accountno" name="accountno" required>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="type">Account Type:</label>
+                      <select id="type" name="type" required>
+                        <option value="0" hidden>Select Type</option>
+                        <option value="Savings">Savings</option>
+                        <option value="Fixed">Fixed</option>
+                        <option value="Current">Current</option>
+                      </select>
+                    </div>
+
+                    <button type="submit" name="submit">Create</button>
+              <?php
+                }
+              }
+            }
+              ?>
             </form>
           </div>
         </div>
@@ -172,44 +189,31 @@ if (isset($_POST['submit'])) {
       </div>
     </div>
     <div class="sidebar">
-      <h4>Accounts</h4>
+    <h4>Accounts</h4>
+      <?php
+        include("connection.php");
+        $email = $_SESSION['loginGuard'];
+        $sql = "SELECT * FROM accounts WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
 
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
+      if (mysqli_num_rows($result) > 0) {
+          while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="balance">
+                  <i class="fa-solid fa-money-check-dollar icon"></i>
+                  <div class="info">
+                      <h5><?php echo $row['type']; ?></h5>
+                      <h5><?php echo $row['accountno']; ?></h5>
+                      <span><i class='fa-solid fa-rupee-sign'></i> <?php echo number_format($row['amount']); ?></span>
+                  </div>
+              </div>
+              <?php
+          }
+      } else {
+          echo "No accounts found";
+      }
+      mysqli_close($conn);
+      ?>
     </div>
   </div>
 </body>
@@ -239,6 +243,20 @@ if (isset($_POST['submit'])) {
       // Set the generated number as the value of the input field
       document.getElementById("accountno").value = uniqueNumber;
   }
+</script>
+
+<script>
+    var mobileInput = document.getElementById("mobileno");
+    var errorMessage = document.getElementById("mobile-error-msg");
+
+    mobileInput.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d{10}$/;
+      if (mobileNumberPattern.test(mobileInput.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
 </script>
 
 </html>

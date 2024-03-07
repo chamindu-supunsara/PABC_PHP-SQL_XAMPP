@@ -9,6 +9,58 @@ if (!isset($_SESSION['loginGuardAdmin'])) {
 
 $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 1);
 
+include("connection.php");
+$sql = "SELECT * FROM accounts";
+$result = mysqli_query($conn, $sql);
+
+$dataPoints = array();
+
+while ($row = mysqli_fetch_assoc($result)) {
+  $dataPoints[] = array(
+    "label" => $row['clientid'],
+    "y" => $row['amount']
+  );
+}
+
+include("connection.php");
+$sql = "SELECT * FROM fund_transfer";
+$result2 = mysqli_query($conn, $sql);
+
+$dataPoint = array();
+
+while ($row2 = mysqli_fetch_assoc($result2)) {
+  $dataPoint[] = array(
+    "label" => $row2['fund_transfer_type'],
+    "y" => $row2['transfer_amount']
+  );
+}
+
+include("connection.php");
+$sql = "SELECT * FROM bills";
+$result = mysqli_query($conn, $sql);
+
+$dataPointbills = array();
+
+while ($row3 = mysqli_fetch_assoc($result)) {
+  $dataPointbills[] = array(
+    "label" => $row3['id'],
+    "y" => $row3['amount']
+  );
+}
+
+include("connection.php");
+$sql = "SELECT * FROM utilitybills";
+$result = mysqli_query($conn, $sql);
+
+$dataPointutility = array();
+
+while ($row3 = mysqli_fetch_assoc($result)) {
+  $dataPointutility[] = array(
+    "label" => $row3['id'],
+    "y" => $row3['amount3']
+  );
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -16,16 +68,117 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="Dashboard.css">
+    <link rel="stylesheet" href="DashboardAdmin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
+<script>
+  window.onload = function() {
+
+  var chart = new CanvasJS.Chart("chartContainerbar", {
+    animationEnabled: true,
+    theme: "light2",
+    axisY: {
+      title: "Amount",
+      labelFormatter: function(e){
+          if(e.value >= 1000){
+              return (e.value / 1000).toFixed(1) + "k";
+          }
+          return e.value;
+        }
+    },
+    axisX: {
+      title: "Transaction ID",
+      labelFormatter: function(e){
+          if(e.value >= 1000){
+              return (e.value / 1000).toFixed(1) + "k";
+          }
+          return e.value;
+        }
+    },
+    data: [{
+      type: "column",
+      yValueFormatString: "#,###\" LKR\"",
+      dataPoints: <?php echo json_encode($dataPoint, JSON_NUMERIC_CHECK); ?>
+    }]
+  });
+
+  var chartbill = new CanvasJS.Chart("chartContainerbill", {
+    animationEnabled: true,
+    theme: "light3",
+    axisY: {
+      title: "Amount",
+      labelFormatter: function(e){
+          if(e.value >= 1000){
+              return (e.value / 1000).toFixed(1) + "k";
+          }
+          return e.value;
+        }
+    },
+    axisX: {
+      title: "Transaction ID",
+      labelFormatter: function(e){
+          if(e.value >= 1000){
+              return (e.value / 1000).toFixed(1) + "k";
+          }
+          return e.value;
+        }
+    },
+    data: [{
+      type: "column",
+      yValueFormatString: "#,###\" LKR\"",
+      dataPoints: <?php echo json_encode($dataPointbills, JSON_NUMERIC_CHECK); ?>
+    }]
+  });
+  
+  var chart2 = new CanvasJS.Chart("chartContainerpie", {
+    animationEnabled: true,
+    data: [{
+      type: "pie",
+      yValueFormatString: "#,###\" LKR\"",
+      dataPoints: <?php echo json_encode($dataPoints, JSON_NUMERIC_CHECK); ?>
+    }]
+  });
+
+  var chart3 = new CanvasJS.Chart("chartContainerbar3", {
+    animationEnabled: true,
+    theme: "light2",
+    axisY: {
+      title: "Amount",
+      labelFormatter: function(e){
+          if(e.value >= 1000){
+              return (e.value / 1000).toFixed(1) + "k";
+          }
+          return e.value;
+        }
+    },
+    axisX: {
+      title: "Transaction ID",
+      labelFormatter: function(e){
+          if(e.value >= 1000){
+              return (e.value / 1000).toFixed(1) + "k";
+          }
+          return e.value;
+        }
+    },
+    data: [{
+      type: "column",
+      yValueFormatString: "#,###\" LKR\"",
+      dataPoints: <?php echo json_encode($dataPointutility, JSON_NUMERIC_CHECK); ?>
+    }]
+  });
+
+  chart.render();
+  chartbill.render();
+  chart2.render();
+  chart3.render();
+  }
+</script>
 </head>
 <body>
   <header class="header">
     <div class="logo">
       <a href="#">Welcome Admin</a>
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">
@@ -45,169 +198,34 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
         <a href="AdminTransactions.php" class="<?= $page == "AdminTransactions.php"? 'active':'' ?>">Manage Transactions</a>
     </nav>
     <div class="main-body">
-      <h2>Dashboard</h2>
-      <div class="promo_card">
-        <h1>Welcome to PABC</h1>
-        <span>Lorem ipsum dolor sit amet.</span>
-        <button>Learn More</button>
-      </div>
-      <div class="history_lists">
-        <div class="list1">
-          <div class="row">
-            <h4>History</h4>
-            <a href="#">See all</a>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Dates</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Ammount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>2, Aug, 2022</td>
-                <td>Sam Tonny</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>29, July, 2022</td>
-                
-                <td>Code Info</td>
-                <td>Silver</td>
-                <td>$5,000.00</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>15, July, 2022</td>
-              
-                <td>Jhon David</td>
-                <td>Startup</td>
-                <td>$3000.00</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>5, July, 2022</td>
-                <td>Salina Gomiz</td>
-                <td>Premimum</td>
-                <td>$7000.00</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>29, June, 2022</td>
-                <td>Gomiz</td>
-                <td>Gold</td>
-                <td>$4000.00</td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>28, June, 2022</td>
-                <td>Elyana Jhon</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
-            </tbody>
-          </table>
+      <h1>Dashboard</h1>
+      <!-- <div class="promo_card">
+        <h1>Welcome to PABC Online Banking</h1>
+        <span>Empowering your finances, one click at a time. </span>
+      </div> -->
+
+      <!-- <br> -->
+      <div class="row">
+        <div class="card">
+            <h2>Accounts</h2>
+            <div id="chartContainerpie" style="height: 325px; width: 425px;"></div>
         </div>
-        <div class="list2">
-          <div class="row">
-            <h4>Documnets</h4>
-            <a href="#">Upload</a>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Uplaoded</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>CNIC</td>
-                <td>PDF</td>
-                <td>20</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Passport</td>
-                <td>PDF</td>
-                <td>12</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Licence</td>
-                <td>PDF</td>
-                <td>9</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Pic</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>5</td>
-                <td>CNIC</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>6</td>
-                <td>Docx</td>
-                <td>Word</td>
-                <td>22</td>
-              </tr> 
-            </tbody>
-          </table>
+
+        <div class="card" style="margin-left: 10px;">
+            <h2>Funds Transactions</h2>
+            <div id="chartContainerbar" style="height: 325px; width: 425px;"></div>
         </div>
       </div>
-    </div>
-    <div class="sidebar">
-      <h4>Accounts</h4>
-      
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
+
+      <div class="row">
+        <div class="card">
+            <h2>Mobile Payments</h2>
+            <div id="chartContainerbill" style="height: 325px; width: 425px;"></div>
         </div>
-      </div>
-      
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
+
+        <div class="card" style="margin-left: 10px;">
+            <h2>Utility Payments</h2>
+            <div id="chartContainerbar3" style="height: 325px; width: 425px;"></div>
         </div>
       </div>
     </div>
@@ -228,5 +246,6 @@ document.getElementById("logoutIcon").addEventListener("click", function() {
     window.location.href = "index.html";
 });
 </script>
+<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
 
 </html>

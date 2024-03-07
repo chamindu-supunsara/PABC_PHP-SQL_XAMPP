@@ -72,7 +72,7 @@ body{
 .container{
   margin-top: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 /* Side menubar section */
@@ -222,7 +222,7 @@ table td{
     background-color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    width: 500px;
+    width: 1000px;
     border-radius: 8px;
 }
 

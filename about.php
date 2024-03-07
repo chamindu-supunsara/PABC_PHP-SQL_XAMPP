@@ -17,18 +17,16 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="Dashboard.css">
+    <title>About Us</title>
+    <link rel="stylesheet" href="aboutus.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
 <body>
   <header class="header">
     <div class="logo">
       <a href="#">Welcome</a>
-      <img src="C:\Users\saman\Desktop\NIBM\WEB\Project\nibm 1.png" alt="Logo 1" class="logo">
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">
@@ -52,176 +50,65 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php"? 'active':'' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php"? 'active':'' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
     <div class="main-body">
-      <h2>Dashboard</h2>
       <div class="promo_card">
-        <h1>Welcome to PABC Internet Banking</h1>
-        <span>The Truly Sri Lankan Bank.</span>
-        <button>Learn More</button>
+        <h1>About Us</h1>
       </div>
-      <div class="history_lists">
-        <div class="list1">
-          <div class="row">
-            <h4>History</h4>
-            <a href="#">See all</a>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Dates</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Ammount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>2, Aug, 2022</td>
-                <td>Sam Tonny</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>29, July, 2022</td>
-                
-                <td>Code Info</td>
-                <td>Silver</td>
-                <td>$5,000.00</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>15, July, 2022</td>
-              
-                <td>Jhon David</td>
-                <td>Startup</td>
-                <td>$3000.00</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>5, July, 2022</td>
-                <td>Salina Gomiz</td>
-                <td>Premimum</td>
-                <td>$7000.00</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>29, June, 2022</td>
-                <td>Gomiz</td>
-                <td>Gold</td>
-                <td>$4000.00</td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>28, June, 2022</td>
-                <td>Elyana Jhon</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="list2">
-          <div class="row">
-            <h4>Documents</h4>
-            <a href="#">Upload</a>
-          </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Uplaoded</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>CNIC</td>
-                <td>PDF</td>
-                <td>20</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Passport</td>
-                <td>PDF</td>
-                <td>12</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Licence</td>
-                <td>PDF</td>
-                <td>9</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Pic</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>5</td>
-                <td>CNIC</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>6</td>
-                <td>Docx</td>
-                <td>Word</td>
-                <td>22</td>
-              </tr> 
-            </tbody>
-          </table>
+      <div class="list1" style="margin-top: 1rem;">
+        <div class="card">
+          <p>Pan Asia Bank’s secret to success is its story of delivering financial inclusion, world-class products 
+            and services and living its values in every customer transaction. As a pioneer in Sri Lanka’s banking 
+            industry, Pan Asia Bank has many first to its credit across technology platforms, unique products and 
+            superlative service. The Bank has developed a unique reputation and culture of being ambitious, 
+            results-oriented, respectful and caring, and supportive of traditional values – a true testament of 
+            the brand’s positioning as a Truly Sri Lankan Bank.
+          </p><br>
+          <p>
+          The lifeblood of the Bank is its people, who are committed to extend empathy, care and a helping hand for financial inclusion and to see its customers prosper.
+          </p><br>
+          <p>
+          The Bank’s financial performance has been characterised by strength and resilience and  it stands as 
+          one of the strongest banks in Sri Lanka. Pan Asia Banks’ spirit of innovation and growth coupled with a 
+          prudent approach to growth and risk has served it well in the most challenging years in the banking industry.
+          </p><br>
+          <p>
+          Pan Asia Bank’s prosperity is linked inextricably to the communities it serves, helping them to face challenges 
+          with confidence through financing sustainable projects and conducting meaningful Corporate Social Responsibility 
+          projects to uplift communities.
+          </p>
         </div>
       </div>
     </div>
     <div class="sidebar">
-      <h4>Currency Rates</h4>
-      
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-      
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
+    <h4>Accounts</h4>
+      <?php
+        include("connection.php");
+        $email = $_SESSION['loginGuard'];
+        $sql = "SELECT * FROM accounts WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
+
+      if (mysqli_num_rows($result) > 0) {
+          while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="balance">
+                  <i class="fa-solid fa-money-check-dollar icon"></i>
+                  <div class="info">
+                      <h5><?php echo $row['type']; ?></h5>
+                      <h5><?php echo $row['accountno']; ?></h5>
+                      <span><i class='fa-solid fa-rupee-sign'></i> <?php echo number_format($row['amount']); ?></span>
+                  </div>
+              </div>
+              <?php
+          }
+      } else {
+          echo "No accounts found";
+      }
+      mysqli_close($conn);
+      ?>
     </div>
   </div>
 </body>

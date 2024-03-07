@@ -13,31 +13,51 @@ if (isset($_POST['submitmobile'])) {
 
   include("connection.php");
 
-  $type = $_POST['type'];
-  $accountno = $_POST['accountno'];
-  $amount = $_POST['amount'];
-  $mobileno = $_POST['mobileno'];
-  $email = $_POST['email'];
+  // Sanitize inputs
+  $type = mysqli_real_escape_string($conn, $_POST['type']);
+  $accountno = mysqli_real_escape_string($conn, $_POST['accountno']);
+  $amount = mysqli_real_escape_string($conn, $_POST['amount']);
+  $mobileno = mysqli_real_escape_string($conn, $_POST['mobileno']);
+  $email = mysqli_real_escape_string($conn, $_POST['email']);
 
-  if (!empty($errorMessage)) {
-    echo ("<p>There was an error with your form:</p>\n");
+  // Check for sufficient balance
+  $check_balance_sql = "SELECT amount FROM accounts WHERE accountno = $accountno";
+  $balance_result = mysqli_query($conn, $check_balance_sql);
 
-    echo ("<ul>" . $errorMessage . "</ul>\n");
-  } else { //if(!empty($errorMessage))
+  if ($balance_result && mysqli_num_rows($balance_result) > 0) {
+    $row = mysqli_fetch_assoc($balance_result);
+    $current_balance = $row['amount'];
 
-    $sql = "INSERT INTO bills" . "(type,accountno,amount,mobileno,email) " . "VALUES ('$type','$accountno','$amount','$mobileno','$email')";
+    if ($current_balance >= $amount) {
+      // Update balance
+      $updated_balance = $current_balance - $amount;
+      $updateSql = "UPDATE accounts SET amount = $updated_balance WHERE accountno = $accountno";
+      $updateResult = mysqli_query($conn, $updateSql);
 
-    $results = mysqli_query($conn, $sql);
+      if (!$updateResult) {
+        die('Could not update account balance: ' . mysqli_error($conn));
+      }
 
-    if (!$results) {
-      die('Could not enter data: ' . mysqli_error($conn));
+      // Insert payment record
+      $sql = "INSERT INTO bills (type, accountno, amount, mobileno, email) VALUES ('$type', '$accountno', '$amount', '$mobileno', '$email')";
+      $results = mysqli_query($conn, $sql);
+
+      if (!$results) {
+        die('Could not enter data: ' . mysqli_error($conn));
+      } else {
+        $successMessage = "Payment Successful!";
+        echo "<script>alert('$successMessage');</script>";
+
+        // Redirect to Dashboard page after a delay
+        echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; }, 1000);</script>";
+      }
     } else {
-      $successMessage = "Payment Successfully!";
-      echo "<script>alert('$successMessage');</script>";
-
-      // Redirect to LoginCustomer page after a delay
-      echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+      $errorMessage = "Insufficient balance in the account!";
+      echo "<script>alert('$errorMessage');</script>";
     }
+  } else {
+    $errorMessage = "Account not found!";
+    echo "<script>alert('$errorMessage');</script>";
   }
 }
 
@@ -45,31 +65,51 @@ if (isset($_POST['submitbill'])) {
 
   include("connection.php");
 
-  $type1 = $_POST['type1'];
-  $accountno2 = $_POST['accountno2'];
-  $amount3 = $_POST['amount3'];
-  $mobileno4 = $_POST['mobileno4'];
-  $email5 = $_POST['email5'];
+  // Sanitize inputs
+  $type1 = mysqli_real_escape_string($conn, $_POST['type1']);
+  $accountno2 = mysqli_real_escape_string($conn, $_POST['accountno2']);
+  $amount3 = mysqli_real_escape_string($conn, $_POST['amount3']);
+  $mobileno4 = mysqli_real_escape_string($conn, $_POST['mobileno4']);
+  $email5 = mysqli_real_escape_string($conn, $_POST['email5']);
 
-  if (!empty($errorMessage)) {
-    echo ("<p>There was an error with your form:</p>\n");
+  // Check for sufficient balance
+  $check_balance_sql = "SELECT amount FROM accounts WHERE accountno = $accountno2";
+  $balance_result = mysqli_query($conn, $check_balance_sql);
 
-    echo ("<ul>" . $errorMessage . "</ul>\n");
-  } else { //if(!empty($errorMessage))
+  if ($balance_result && mysqli_num_rows($balance_result) > 0) {
+    $row = mysqli_fetch_assoc($balance_result);
+    $current_balance = $row['amount'];
 
-    $sql = "INSERT INTO utilitybills" . "(type1,accountno2,amount3,mobileno4,email5) " . "VALUES ('$type1','$accountno2','$amount3','$mobileno4','$email5')";
+    if ($current_balance >= $amount3) {
+      // Update balance
+      $updated_balance = $current_balance - $amount3;
+      $updateSql = "UPDATE accounts SET amount = $updated_balance WHERE accountno = $accountno2";
+      $updateResult = mysqli_query($conn, $updateSql);
 
-    $results = mysqli_query($conn, $sql);
+      if (!$updateResult) {
+        die('Could not update account balance: ' . mysqli_error($conn));
+      }
 
-    if (!$results) {
-      die('Could not enter data: ' . mysqli_error($conn));
+      // Insert payment record
+      $sql = "INSERT INTO utilitybills (type1, accountno2, amount3, mobileno4, email5) VALUES ('$type1', '$accountno2', '$amount3', '$mobileno4', '$email5')";
+      $results = mysqli_query($conn, $sql);
+
+      if (!$results) {
+        die('Could not enter data: ' . mysqli_error($conn));
+      } else {
+        $successMessage = "Payment Successful!";
+        echo "<script>alert('$successMessage');</script>";
+
+        // Redirect to Dashboard page after a delay
+        echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; }, 1000);</script>";
+      }
     } else {
-      $successMessage = "Payment Successfully!";
-      echo "<script>alert('$successMessage');</script>";
-
-      // Redirect to LoginCustomer page after a delay
-      echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+      $errorMessage = "Insufficient balance in the account!";
+      echo "<script>alert('$errorMessage');</script>";
     }
+  } else {
+    $errorMessage = "Account not found!";
+    echo "<script>alert('$errorMessage');</script>";
   }
 }
 ?>
@@ -80,8 +120,8 @@ if (isset($_POST['submitbill'])) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="Dashboard.css">
+  <title>Bill Payments</title>
+  <link rel="stylesheet" href="bill.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
 
@@ -90,8 +130,7 @@ if (isset($_POST['submitbill'])) {
     <div class="logo">
       <a href="#">Welcome</a>
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">
@@ -115,7 +154,7 @@ if (isset($_POST['submitbill'])) {
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php" ? 'active' : '' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php" ? 'active' : '' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php" ? 'active' : '' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php" ? 'active' : '' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
@@ -154,24 +193,46 @@ if (isset($_POST['submitbill'])) {
                 </select>
               </div>
 
-              <div class="form-group">
-                <label for="accountno">Account No:</label>
-                <input type="text" id="accountno" name="accountno" required>
-              </div>
+              <?php
+              include("connection.php");
+              $email = $_SESSION['loginGuard'];
+              $sql = "SELECT * FROM accounts WHERE email = '$email'";
+              $result = mysqli_query($conn, $sql);
+
+              if (mysqli_num_rows($result) > 0) {
+                ?>
+                <div class="form-group">
+                  <label for="accountno">Source Account Number:</label>
+                  <select id="accountno" name="accountno" required>
+                      <option value="" hidden>Select Account</option>
+                      <?php
+                      while ($row = mysqli_fetch_assoc($result)) {
+                          echo "<option value='" . $row['accountno'] . "'>" . $row['accountno'] . " - " . $row['type'] . "</option>";
+                      }
+                      ?>
+                  </select>
+                </div>
+                <?php
+              } else {
+                echo "No accounts found";
+              }
+              mysqli_close($conn);
+              ?>
 
               <div class="form-group">
                 <label for="amount">Amount:</label>
-                <input type="text" id="amount" name="amount" required>
+                <input type="number" id="amount" name="amount" required>
               </div>
 
               <div class="form-group">
                 <label for="mobileno">Mobile No:</label>
                 <input type="text" id="mobileno" name="mobileno" required>
+                <span id="mobile-error-msg" style="color: red; display: none; font-size: 12px;">Please enter a valid mobile number.</span>
               </div>
 
               <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="text" id="email" name="email" required>
+                <input type="email" id="email" name="email" value="<?php echo $_SESSION['loginGuard']; ?>" required>
               </div>
 
               <button type="submit" name="submitmobile">Pay Now</button>
@@ -196,29 +257,47 @@ if (isset($_POST['submitbill'])) {
                   <option value="Other">Other</option>
                 </select>
               </div>
-              <!-- <div class="form-group">
-                <label for="type1">Bill Type:</label>
-                <input type="text" id="type1" name="type1" required>
-              </div> -->
 
-              <div class="form-group">
-                <label for="accountno2">Account No:</label>
-                <input type="text" id="accountno2" name="accountno2" required>
-              </div>
+              <?php
+              include("connection.php");
+              $email = $_SESSION['loginGuard'];
+              $sql = "SELECT * FROM accounts WHERE email = '$email'";
+              $result = mysqli_query($conn, $sql);
+
+              if (mysqli_num_rows($result) > 0) {
+                ?>
+                <div class="form-group">
+                  <label for="accountno2">Source Account Number:</label>
+                  <select id="accountno2" name="accountno2" required>
+                      <option value="" hidden>Select Account</option>
+                      <?php
+                      while ($row = mysqli_fetch_assoc($result)) {
+                          echo "<option value='" . $row['accountno'] . "'>" . $row['accountno'] . " - " . $row['type'] . "</option>";
+                      }
+                      ?>
+                  </select>
+                </div>
+                <?php
+              } else {
+                echo "No accounts found";
+              }
+              mysqli_close($conn);
+              ?>
 
               <div class="form-group">
                 <label for="amount3">Amount:</label>
-                <input type="text" id="amount3" name="amount3" required>
+                <input type="number" id="amount3" name="amount3" required>
               </div>
 
               <div class="form-group">
-                <label for="mobileno4">Mobile No:</label>
+                <label for="mobileno4">Account No:</label>
                 <input type="text" id="mobileno4" name="mobileno4" required>
+                <span id="mobile-error" style="color: red; display: none; font-size: 12px;">Please enter a valid account number.</span>
               </div>
 
               <div class="form-group">
                 <label for="email5">Email:</label>
-                <input type="text" id="email5" name="email5" required>
+                <input type="email" id="email5" name="email5" value="<?php echo $_SESSION['loginGuard']; ?>" required>
               </div>
 
               <button type="submit" name="submitbill">Pay Now</button>
@@ -228,44 +307,31 @@ if (isset($_POST['submitbill'])) {
       </div>
     </div>
     <div class="sidebar">
-      <h4>Accounts</h4>
+    <h4>Accounts</h4>
+      <?php
+        include("connection.php");
+        $email = $_SESSION['loginGuard'];
+        $sql = "SELECT * FROM accounts WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
 
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
+      if (mysqli_num_rows($result) > 0) {
+          while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="balance">
+                  <i class="fa-solid fa-money-check-dollar icon"></i>
+                  <div class="info">
+                      <h5><?php echo $row['type']; ?></h5>
+                      <h5><?php echo $row['accountno']; ?></h5>
+                      <span><i class='fa-solid fa-rupee-sign'></i> <?php echo number_format($row['amount']); ?></span>
+                  </div>
+              </div>
+              <?php
+          }
+      } else {
+          echo "No accounts found";
+      }
+      mysqli_close($conn);
+      ?>
     </div>
   </div>
 </body>
@@ -284,5 +350,32 @@ if (isset($_POST['submitbill'])) {
     window.location.href = "index.html";
   });
 </script>
+
+<script>
+    var mobileInput = document.getElementById("mobileno");
+    var errorMessage = document.getElementById("mobile-error-msg");
+
+    var mobileInput1 = document.getElementById("mobileno4");
+    var errorMessage = document.getElementById("mobile-error");
+
+    mobileInput.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d{10}$/;
+      if (mobileNumberPattern.test(mobileInput.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
+
+    mobileInput1.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d*$/;
+      if (mobileNumberPattern.test(mobileInput1.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
+</script>
+
 
 </html>

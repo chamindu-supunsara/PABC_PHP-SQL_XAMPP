@@ -7,42 +7,58 @@ if (!isset($_SESSION['loginGuard'])) {
     exit();
 }
 
-$page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 1);
-
+// Check if the submit button is clicked
 if (isset($_POST['submit'])) {
 
   include("connection.php");
 
   $source_account_number = $_POST['source_account_number'];
   $transfer_amount = $_POST['transfer_amount'];
-  $payment_type = $_POST['payment_type'];
-  $account_type = $_POST['account_type'];
-  $fund_transfer_type = $_POST['fund_transfer_type'];
-  $beneficiary_account_no = $_POST['beneficiary_account_no'];
-  $remarks = $_POST['remarks'];
-  $beneficiary_name = $_POST['beneficiary_name'];
 
-  if (!empty($errorMessage)) {
-    echo ("<p>There was an error with your form:</p>\n");
+  // Check if the source account has sufficient balance
+  $check_balance_sql = "SELECT amount FROM accounts WHERE accountno = $source_account_number";
+  $balance_result = mysqli_query($conn, $check_balance_sql);
 
-    echo ("<ul>" . $errorMessage . "</ul>\n");
-  } else { //if(!empty($errorMessage))
+  if ($balance_result && mysqli_num_rows($balance_result) > 0) {
+    $row = mysqli_fetch_assoc($balance_result);
+    $current_balance = $row['amount'];
 
-    $sql = "INSERT INTO fund_transfer" . "(source_account_number,
-    transfer_amount,payment_type,account_type,fund_transfer_type,
-    beneficiary_account_no,remarks,beneficiary_name) " . "VALUES ('$source_account_number','$transfer_amount','$payment_type','$account_type','$fund_transfer_type','$beneficiary_account_no','$remarks','$beneficiary_name')";
+    if ($current_balance >= $transfer_amount) {
+      // Update balance
+      $updated_balance = $current_balance - $transfer_amount;
+      $updateSql = "UPDATE accounts SET amount = $updated_balance WHERE accountno = $source_account_number";
+      $updateResult = mysqli_query($conn, $updateSql);
 
-    $results = mysqli_query($conn, $sql);
+      if (!$updateResult) {
+        die('Could not update account balance: ' . mysqli_error($conn));
+      }
 
-    if (!$results) {
-      die('Could not enter data: ' . mysqli_error($conn));
+      // Insert transfer record
+      $payment_type = $_POST['payment_type'];
+      $account_type = $_POST['account_type'];
+      $fund_transfer_type = $_POST['fund_transfer_type'];
+      $beneficiary_account_no = $_POST['beneficiary_account_no'];
+      $remarks = $_POST['remarks'];
+      $beneficiary_email = $_POST['beneficiary_email'];
+      $sender_email = $_POST['sender_email'];
+
+      $sql = "INSERT INTO fund_transfer (source_account_number, transfer_amount, payment_type, account_type, fund_transfer_type, beneficiary_account_no, remarks, beneficiary_email, sender_email) VALUES ('$source_account_number', '$transfer_amount', '$payment_type', '$account_type', '$fund_transfer_type', '$beneficiary_account_no', '$remarks', '$beneficiary_email', '$sender_email')";
+      $results = mysqli_query($conn, $sql);
+
+      if (!$results) {
+        die('Could not enter data: ' . mysqli_error($conn));
+      } else {
+        $successMessage = "Funds Transfer Successful!";
+        echo "<script>alert('$successMessage');</script>";
+        echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; }, 1000);</script>";
+      }
     } else {
-      $successMessage = "Funds Transfer Successfully!";
-      echo "<script>alert('$successMessage');</script>";
-
-      // Redirect to LoginCustomer page after a delay
-      echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+      $errorMessage = "Insufficient balance in the source account!";
+      echo "<script>alert('$errorMessage');</script>";
     }
+  } else {
+    $errorMessage = "Source account not found!";
+    echo "<script>alert('$errorMessage');</script>";
   }
 }
 
@@ -52,7 +68,7 @@ if (isset($_POST['submit'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Tranfer Funds</title>
     <link rel="stylesheet" href="transfund.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
@@ -61,8 +77,7 @@ if (isset($_POST['submit'])) {
     <div class="logo">
       <a href="#">Welcome</a>
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">
@@ -86,7 +101,7 @@ if (isset($_POST['submit'])) {
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php"? 'active':'' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php"? 'active':'' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
@@ -96,15 +111,31 @@ if (isset($_POST['submit'])) {
         </div>
           <div class="card">
             <form name="fundtransfer" action="" method="post">
-              <div class="form-group">
-                <label for="source_account_number">Source Account Number:</label>
-                <select id="source_account_number" name="source_account_number" required>
-                  <option value="0" hidden>Select Type</option>
-                  <option value="Savings">Savings</option>
-                  <option value="Fixed">Fixed</option>
-                  <option value="Current">Current</option>
-                </select>
-              </div>
+              <?php
+              include("connection.php");
+              $email = $_SESSION['loginGuard'];
+              $sql = "SELECT * FROM accounts WHERE email = '$email'";
+              $result = mysqli_query($conn, $sql);
+
+              if (mysqli_num_rows($result) > 0) {
+                ?>
+                <div class="form-group">
+                  <label for="source_account_number">Source Account Number:</label>
+                  <select id="source_account_number" name="source_account_number" required>
+                      <option value="" hidden>Select Account</option>
+                      <?php
+                      while ($row = mysqli_fetch_assoc($result)) {
+                          echo "<option value='" . $row['accountno'] . "'>" . $row['accountno'] . " - " . $row['type'] . "</option>";
+                      }
+                      ?>
+                  </select>
+                </div>
+                <?php
+              } else {
+                echo "No accounts found";
+              }
+              mysqli_close($conn);
+              ?>
 
               <div class="form-group">
                 <label for="transfer_amount">Transfer Amount:</label>
@@ -143,6 +174,7 @@ if (isset($_POST['submit'])) {
               <div class="form-group">
                 <label for="beneficiary_account_no">Beneficiary Account No:</label>
                 <input type="text" id="beneficiary_account_no" name="beneficiary_account_no" required>
+                <span id="mobile-error" style="color: red; display: none; font-size: 12px;">Please enter a valid account number.</span>
               </div>
 
               <div class="form-group">
@@ -151,8 +183,13 @@ if (isset($_POST['submit'])) {
               </div>
 
               <div class="form-group">
-                <label for="beneficiary_name">Beneficiary Name:</label>
-                <input type="text" id="beneficiary_name" name="beneficiary_name" required>
+                <label for="beneficiary_email">Beneficiary Email:</label>
+                <input type="email" id="beneficiary_email" name="beneficiary_email" required>
+              </div>
+
+              <div class="form-group">
+                <label for="sender_email">Beneficiary Email:</label>
+                <input type="email" id="sender_email" name="sender_email" value="<?php echo $_SESSION['loginGuard']; ?>">
               </div>
 
               <button type="submit" name="submit">Proceed</button>
@@ -161,44 +198,31 @@ if (isset($_POST['submit'])) {
           </div>
     </div>
     <div class="sidebar">
-      <h4>Accounts</h4>
-      
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-      
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
+    <h4>Accounts</h4>
+      <?php
+        include("connection.php");
+        $email = $_SESSION['loginGuard'];
+        $sql = "SELECT * FROM accounts WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
+
+      if (mysqli_num_rows($result) > 0) {
+          while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="balance">
+                  <i class="fa-solid fa-money-check-dollar icon"></i>
+                  <div class="info">
+                      <h5><?php echo $row['type']; ?></h5>
+                      <h5><?php echo $row['accountno']; ?></h5>
+                      <span><i class='fa-solid fa-rupee-sign'></i> <?php echo number_format($row['amount']); ?></span>
+                  </div>
+              </div>
+              <?php
+          }
+      } else {
+          echo "No accounts found";
+      }
+      mysqli_close($conn);
+      ?>
     </div>
   </div>
 </body>
@@ -216,6 +240,20 @@ document.getElementById("logoutIcon").addEventListener("click", function() {
     localStorage.clear();
     window.location.href = "index.html";
 });
+</script>
+
+<script>
+    var mobileInput1 = document.getElementById("beneficiary_account_no");
+    var errorMessage = document.getElementById("mobile-error");
+
+    mobileInput1.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d*$/;
+      if (mobileNumberPattern.test(mobileInput1.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
 </script>
 
 </html>

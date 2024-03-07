@@ -9,7 +9,35 @@ if (!isset($_SESSION['loginGuard'])) {
 
 $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 1);
 
-// Continue with the rest of your Dashboard.php code here...
+if (isset($_POST['submit'])) {
+  include("connection.php");
+
+  $name = $_POST['name'];
+  $telephone = $_POST['telephone'];
+  $email = $_POST['email'];
+  $subject = $_POST['subject'];
+  $message = $_POST['message'];
+
+  if (!empty($errorMessage)) {
+    echo ("<p>There was an error with your form:</p>\n");
+
+    echo ("<ul>" . $errorMessage . "</ul>\n");
+  } else {
+
+    $sql = "INSERT INTO contact_us" . "(name,telephone,email,subject,message) " . "VALUES ('$name','$telephone','$email','$subject','$message')";
+
+    $results = mysqli_query($conn, $sql);
+
+    if (!$results) {
+      die('Could not enter data: ' . mysqli_error($conn));
+    } else {
+      $successMessage = "Message Send Successfully!";
+      echo "<script>alert('$successMessage');</script>";
+
+      echo "<script>setTimeout(function(){ window.location.href = 'Dashboard.php'; });</script>";
+    }
+  }
+}
 
 ?>
 <!DOCTYPE html>
@@ -17,7 +45,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Contact Us</title>
     <link rel="stylesheet" href="Dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" />
 </head>
@@ -26,8 +54,7 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
     <div class="logo">
       <a href="#">Welcome</a>
       <div class="search_box">
-        <input type="text" placeholder="Search">
-        <i class="fa-sharp fa-solid fa-magnifying-glass"></i>
+        <h2>PABC Online Banking</h2>
       </div>
     </div>
     <div class="header-icons">
@@ -51,176 +78,100 @@ $page = substr($_SERVER['SCRIPT_NAME'], strrpos($_SERVER['SCRIPT_NAME'], '/') + 
           <span>Quick Link</span>
           <a href="about.php" class="<?= $page == "about.php"? 'active':'' ?>">About Us</a>
           <a href="contactus.php" class="<?= $page == "contactus.php"? 'active':'' ?>">Contact Us</a>
-          <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a>
+          <!-- <a href="rateus.php" class="<?= $page == "rateus.php"? 'active':'' ?>">Rate Us</a> -->
         </div>
       </div>
     </nav>
     <div class="main-body">
-      <h2>Dashboard</h2>
       <div class="promo_card">
-        <h1>Welcome to PABC</h1>
-        <span>Lorem ipsum dolor sit amet.</span>
-        <button>Learn More</button>
+        <h1>Contact Us</h1>
       </div>
       <div class="history_lists">
         <div class="list1">
           <div class="row">
-            <h4>History</h4>
-            <a href="#">See all</a>
+            <h4>Send us a Message</h4>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Dates</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Ammount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>2, Aug, 2022</td>
-                <td>Sam Tonny</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>29, July, 2022</td>
-                
-                <td>Code Info</td>
-                <td>Silver</td>
-                <td>$5,000.00</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>15, July, 2022</td>
-              
-                <td>Jhon David</td>
-                <td>Startup</td>
-                <td>$3000.00</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>5, July, 2022</td>
-                <td>Salina Gomiz</td>
-                <td>Premimum</td>
-                <td>$7000.00</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>29, June, 2022</td>
-                <td>Gomiz</td>
-                <td>Gold</td>
-                <td>$4000.00</td>
-              </tr>
-              <tr>
-                <td>6</td>
-                <td>28, June, 2022</td>
-                <td>Elyana Jhon</td>
-                <td>Premimum</td>
-                <td>$2000.00</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="card">
+            <form name="contact" action="" method="post">
+              <div class="form-group">
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" required>
+              </div>
+
+              <div class="form-group">
+                <label for="telephone">Telephone:</label>
+                <input type="text" id="telephone" name="telephone" required>
+                <span id="mobile-error-msg" style="color: red; display: none; font-size: 12px;">Please enter a valid mobile number.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+              </div>
+
+              <div class="form-group">
+                <label for="subject">Subject:</label>
+                <input type="text" id="subject" name="subject" required>
+              </div>
+
+              <div class="form-group">
+                <label for="message">Message:</label>
+                <input type="text" id="message" name="message" required>
+              </div>
+
+              <button type="submit" name="submit">Send</button>
+            </form>
+          </div>
         </div>
-        <div class="list2">
+        <div class="list1">
           <div class="row">
-            <h4>Documnets</h4>
-            <a href="#">Upload</a>
+            <h4>Read Me</h4>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Type</th>
-                <th>Uplaoded</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td>CNIC</td>
-                <td>PDF</td>
-                <td>20</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>Passport</td>
-                <td>PDF</td>
-                <td>12</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>Licence</td>
-                <td>PDF</td>
-                <td>9</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>Pic</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>5</td>
-                <td>CNIC</td>
-                <td>Jpg</td>
-                <td>22</td>
-              </tr> 
-              <tr>
-                <td>6</td>
-                <td>Docx</td>
-                <td>Word</td>
-                <td>22</td>
-              </tr> 
-            </tbody>
-          </table>
+          <div class="promo_card1" style="margin-left: 10px;">
+          <h2>We, at Pan Asia Bank, are eager to serve your personal and business needs.</h2>
+          <br>
+          <p>Would you like to chat with our customer service representative?</p>
+          <br>
+          <p>Monday to Friday. 7am to 10pm</p>
+          <br>
+          <h3>Email</h3>
+          <p>customerservice@pabcbank.com</p>
+          <br>
+          <h3>Fax</h3>
+          <p>+94 11 4 667 222</p>
+          <br>
+          <h3>Send us your CV today</h3>
+          <p>careers@pabcbank.com</p>
+        </div>
         </div>
       </div>
     </div>
     <div class="sidebar">
-      <h4>Accounts</h4>
-      
-      <div class="balance">
-        <i class="fas fa-dollar icon"></i>
-        <div class="info">
-          <h5>Dollar</h5>
-          <span><i class="fas fa-dollar"></i>25,000.00</span>
-        </div>
-      </div>
-      
-      <div class="balance">
-        <i class="fa-solid fa-rupee-sign icon"></i>
-        <div class="info">
-          <h5>PKR</h5>
-          <span><i class="fa-solid fa-rupee-sign"></i>300,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fas fa-euro icon"></i>
-        <div class="info">
-          <h5>Euro</h5>
-          <span><i class="fas fa-euro"></i>25,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-indian-rupee-sign icon"></i>
-        <div class="info">
-          <h5>INR</h5>
-          <span><i class="fa-solid fa-indian-rupee-sign"></i>220,000.00</span>
-        </div>
-      </div>
-      <div class="balance">
-        <i class="fa-solid fa-sterling-sign icon"></i>
-        <div class="info">
-          <h5>Pound</h5>
-          <span><i class="fa-solid fa-sterling-sign"></i>30,000.00</span>
-        </div>
-      </div>
+    <h4>Accounts</h4>
+      <?php
+        include("connection.php");
+        $email = $_SESSION['loginGuard'];
+        $sql = "SELECT * FROM accounts WHERE email = '$email'";
+        $result = mysqli_query($conn, $sql);
+
+      if (mysqli_num_rows($result) > 0) {
+          while ($row = mysqli_fetch_assoc($result)) {
+              ?>
+              <div class="balance">
+                  <i class="fa-solid fa-money-check-dollar icon"></i>
+                  <div class="info">
+                      <h5><?php echo $row['type']; ?></h5>
+                      <h5><?php echo $row['accountno']; ?></h5>
+                      <span><i class='fa-solid fa-rupee-sign'></i> <?php echo number_format($row['amount']); ?></span>
+                  </div>
+              </div>
+              <?php
+          }
+      } else {
+          echo "No accounts found";
+      }
+      mysqli_close($conn);
+      ?>
     </div>
   </div>
 </body>
@@ -238,6 +189,20 @@ document.getElementById("logoutIcon").addEventListener("click", function() {
     localStorage.clear();
     window.location.href = "index.html";
 });
+</script>
+
+<script>
+    var mobileInput = document.getElementById("telephone");
+    var errorMessage = document.getElementById("mobile-error-msg");
+
+    mobileInput.addEventListener("input", function() {
+      var mobileNumberPattern = /^\d{10}$/;
+      if (mobileNumberPattern.test(mobileInput.value)) {
+        errorMessage.style.display = "none";
+      } else {
+        errorMessage.style.display = "block";
+      }
+    });
 </script>
 
 </html>
